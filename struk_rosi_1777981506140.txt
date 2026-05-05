@@ -1,0 +1,14 @@
+======================================
+         STRUK PEMBELIAN
+   COOKIES IN YOUR HEART
+======================================
+Nama     : rosi
+Varian   : hany
+Rasa     : coklat
+Jumlah   : 12
+Harga    : 2000
+Subtotal : 24000
+--------------------------------------
+GRAND TOTAL: 24000
+======================================
+

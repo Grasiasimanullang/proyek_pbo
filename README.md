@@ -1,121 +1,155 @@
-M01 Cookies In Your Heart Simulator
-Pada tugas kali ini, Anda diminta untuk mengembangkan sebuah sistem manajemen penjualan cookies untuk perusahaan bernama COOKIES IN YOUR HEART. Sistem ini memungkinkan pegawai untuk mencatat data penjualan secara terstruktur dan menyimpannya secara permanen.
+M01 COOKIES IN YOUR HEART - PBO PROJECT
 
-Setiap data penjualan memiliki informasi:
+Pada tugas ini anda diminta untuk mengembangkan sebuah sistem penjualan cookies berbasis CLI (Command Line Interface) menggunakan Java.
 
-Nama pembeli
+Sistem ini mensimulasikan aplikasi kasir sederhana yang memungkinkan pegawai untuk mencatat transaksi penjualan cookies secara terstruktur.
 
-Nomor antrian
+Setiap transaksi memiliki informasi:
 
-Varian cookies
+nama pembeli
+nomor antrian
+varian cookies
+rasa
+jumlah pembelian
+harga satuan
+packaging
+asal pesanan (GrabFood / GoFood / ShopeeFood / Datang ke toko)
 
-Rasa
+Sistem ini menggunakan:
 
-Jumlah (quantity) yang dibeli
+JDBC (SQLite Database)
+Inheritance
+Data Mapper Pattern (ORM sederhana)
+Modular Architecture (Service, Model, Mapper, DB Layer)
+📦 Package Structure
 
-Harga satuan
+Semua kelas model berada pada package:
 
-Pilihan packaging
+src.model
 
-Asal pesanan (GrabFood, GoFood, ShopeeFood, atau Datang ke Toko)
+Semua logic utama berada pada:
 
-Untuk mendukung fleksibilitas, jenis penjualan harus direpresentasikan menggunakan konsep pewarisan (inheritance) dan disimpan ke database SQLite menggunakan pola Data Mapper (ORM).
-
-Semua kelas model harus ditempatkan pada package:
-cookies.model
-
-Kelas mapper dan konfigurasi database pada package:
-cookies.mapper
-
-Driver class harus ditempatkan pada package:
-cookies.driver
-
-Task 01: Basic Sales Input (20 pts)
-Driver yang dikembangkan:
-cookies.driver.Driver1
-
-Format masukan:
-add-sale#<nama_pembeli>#<no_antrian>#<varian>#<rasa>#<qty>#<harga_satuan>#<packaging>#<asal_pesanan>
-
-Program membaca masukan hingga:
----
-
-Output (Format sederhana):
-nama_pembeli|no_antrian|varian|qty|total_harga
-
-Contoh Input
-Plaintext
-add-sale#Josef#001#Soft Cookies#Matcha#2#15000#Box#Datang ke Toko
-add-sale#Christian#002#Crunchy#Choco#1#12000#Plastic#GrabFood
----
-Output
-Plaintext
-Josef|001|Soft Cookies|2|30000.0
-Christian|002|Crunchy|1|12000.0
+src.service
+src.mapper
+src.db
+src.util
+src.app
 
 
-Task 02: Inheritance & Business Logic (25 pts)
-Tambahkan kelas abstrak Sale dan subclass berdasarkan Asal Pesanan:
-
-OnlineSale (untuk GrabFood, GoFood, ShopeeFood)
-
-InStoreSale (untuk Datang ke Toko)
-
-Pada OnlineSale, terdapat biaya layanan tambahan sebesar Rp2.000 per transaksi yang ditambahkan ke total harga.
+TASK 01: INPUT & BASIC CRUD SYSTEM 
 
 Driver:
-cookies.driver.Driver2
 
-Contoh Input
-Plaintext
-add-sale#Josef#001#Soft Cookies#Matcha#2#15000#Box#Datang ke Toko
-add-sale#Christian#002#Crunchy#Choco#1#12000#Plastic#GrabFood
----
-Output (Total harga Christian bertambah biaya layanan)
-Plaintext
-Josef|001|Soft Cookies|2|30000.0
-Christian|002|Crunchy|1|14000.0
+app.DriverTugas1
+
+Format Input:
+Input data penjualan secara manual:
+- nama pembeli
+- nomor antrian
+- varian
+- rasa
+- jumlah
+- harga satuan
+- packaging
+- asal pesanan
+
+Data disimpan ke SQLite database.
+
+Output:
+✔ Data berhasil disimpan!
+Contoh Input:
+Nama Pembeli: Sari
+No Antrian: 12
+Varian: Crumble
+Rasa: Coklat
+Jumlah: 2
+Harga Satuan: 20000
+Packaging: Kotak
+Asal Pesanan: GrabFood
 
 
-Task 03: SQLite & Data Mapper Persistence (25 pts)
-Implementasikan penyimpanan data ke database SQLite (cookies.db). Gunakan pola Data Mapper sehingga kelas model tidak mengandung kode SQL.
-
-Setiap kali perintah add-sale dijalankan, data harus langsung tersimpan di database menggunakan JDBC.
+TASK 02: VIEW DATA PENJUALAN
 
 Driver:
-cookies.driver.Driver3
 
-Ketentuan:
+app.DriverTugas2
+Fitur:
+Menampilkan seluruh data penjualan
+Output dalam bentuk tabel CLI
+Output Format:
+ID | Nama | Varian | Rasa | Jumlah | Harga | Total
 
-Gunakan PreparedStatement untuk keamanan data.
 
-Pastikan koneksi database dikelola di dalam package cookies.mapper.
+TASK 03: UPDATE & DELETE DATA 
 
-Task 04: Structured Table Output & Exception (30 pts)
 Driver:
-cookies.driver.Driver4
 
-Perintah tambahan:
-show-sales
+app.DriverTugas3
+Fitur:
+Update jumlah pembelian berdasarkan ID
+Delete data berdasarkan ID
+Validasi data sebelum eksekusi
+Contoh Input:
+Update Jumlah:
+ID: 1
+Jumlah Baru: 5
 
-Format Output harus berupa tabel yang rapi dengan border. Selain itu, buatlah custom exception InvalidQuantityException yang dibangkitkan jika user memasukkan qty kurang dari atau sama dengan 0.
+Delete:
+ID: 2
 
-Contoh Output show-sales
-Plaintext
-====================================================================================================
-| NO  | PEMBELI         | VARIAN       | RASA       | QTY | PKG     | ASAL         | TOTAL         |
-====================================================================================================
-| 001 | Josef           | Soft Cookies | Matcha     | 2   | Box     | Toko         | Rp30.000,00   |
-| 002 | Christian       | Crunchy      | Choco      | 1   | Plastic | GrabFood     | Rp14.000,00   |
-====================================================================================================
-How to Compile and Run
-Pastikan file sqlite-jdbc.jar berada di folder lib.
 
+TASK 04: SEARCH & STRUK + EXPORT FILE 
+
+Driver:
+
+app.DriverTugas4
+Fitur:
+Cari data berdasarkan nama pembeli
+Cetak struk pembelian
+Export struk ke file .txt
+Menampilkan total harga transaksi
+Format Struk:
+======================================
+         STRUK PEMBELIAN
+   COOKIES IN YOUR HEART
+======================================
+Nama     : Sari
+Varian   : Crumble
+Rasa     : Coklat
+Jumlah   : 2
+Harga    : 20000
+Subtotal : 40000
+--------------------------------------
+GRAND TOTAL: 40000
+======================================
+🧱 DATABASE STRUCTURE (SQLite)
+
+Tabel: penjualan
+
+Field	Type
+id	INTEGER (PK)
+nama_pembeli	TEXT
+nomor_antrian	INTEGER
+varian	TEXT
+rasa	TEXT
+jumlah	INTEGER
+harga_satuan	INTEGER
+packaging	TEXT
+asal_pesanan	TEXT
+⚙️ HOW TO RUN PROJECT
 Compile:
-
-Bash
-javac -cp ".;lib/*" -d bin src/cookies/model/*.java src/cookies/mapper/*.java src/cookies/driver/*.java
+javac -cp ".;lib/*" -d out src/app/*.java src/model/*.java src/service/*.java src/mapper/*.java src/db/*.java src/util/*.java
 Run:
-
-Bash
-java -cp "bin;lib/*" cookies.driver.Driver4
+java -cp ".;out;lib/*" app.Main
+🧠 SOFTWARE DESIGN
+✔ Object Oriented Programming
+Encapsulation
+Inheritance
+Polymorphism
+✔ Architecture
+Service Layer Pattern
+Data Mapper Pattern (ORM sederhana)
+MVC-like separation
+✔ Database
+SQLite via JDBC
+Auto table initialization
