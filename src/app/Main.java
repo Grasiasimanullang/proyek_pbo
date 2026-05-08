@@ -1,142 +1,232 @@
 package app;
 
+import db.InitDB;
 import java.util.Scanner;
-
 import model.Cookies;
 import service.PenjualanService;
 import util.TablePrinter;
-import db.InitDB;
 
 public class Main {
 
+    static String[] menuNama = {
+        "Chocolate Chip Cookies",
+        "Oatmeal Raisin Cookies",
+        "Double Chocolate Cookies",
+        "Peanut Butter Cookies",
+        "Red Velvet Cookies",
+        "Matcha Cookies",
+        "Choco Lava Cookies",
+        "Almond Crispy Cookies",
+        "Vanilla Butter Cookies",
+        "Cookies and Cream Cookies"
+    };
+
+    static int[] menuHarga = {
+        15000,
+        18000,
+        20000,
+        19000,
+        22000,
+        23000,
+        25000,
+        21000,
+        17000,
+        24000
+    };
+
+    // =========================
+    // TAMPIL MENU
+    // =========================
+    public static void tampilMenuCookies() {
+
+        System.out.println("==============================================");
+        System.out.println("              DAFTAR MENU COOKIES             ");
+        System.out.println("==============================================");
+
+        for (int i = 0; i < menuNama.length; i++) {
+
+            System.out.printf("%d. %s = Rp%,d\n",
+                    i + 1,
+                    menuNama[i],
+                    menuHarga[i]);
+        }
+
+        System.out.println("==============================================");
+    }
+
+    // =========================
+    // MAIN PROGRAM
+    // =========================
     public static void main(String[] args) {
 
         InitDB.createTable();
-        
+
         Scanner sc = new Scanner(System.in);
-        PenjualanService service = new PenjualanService();
+
+        PenjualanService service =
+            new PenjualanService();
 
         while (true) {
 
-            System.out.println("\n==========================================");
-            System.out.println("    COOKIES IN YOUR HEART SYSTEM    ");
-            System.out.println("==========================================");
-            System.out.println("1. Input Penjualan");
-            System.out.println("2. Lihat Data Penjualan");
-            System.out.println("3. Update Jumlah");
+            System.out.println("\n====================================================");
+            System.out.println("           COOKIES IN YOUR HEART SYSTEM");
+            System.out.println("====================================================");
+            System.out.println("1. Menu");
+            System.out.println("2. Input Pesanan");
+            System.out.println("3. Lihat Data Penjualan");
             System.out.println("4. Hapus Data");
-            System.out.println("5. Cari Pembeli");
+            System.out.println("5. Hapus Semua Data");
             System.out.println("6. Cetak Struk");
             System.out.println("7. Keluar");
             System.out.print("Pilih menu: ");
 
-            int menu = sc.nextInt();
+            int pilih = sc.nextInt();
             sc.nextLine();
 
-            switch (menu) {
+            switch (pilih) {
 
-                // =====================
-                // INPUT
-                // =====================
-                case 1: {
-                    System.out.print("Nama Pembeli: ");
+                // =========================
+                // MENU
+                // =========================
+                case 1:
+
+                    tampilMenuCookies();
+                    break;
+
+                // =========================
+                // INPUT PESANAN
+                // =========================
+                case 2:
+
+                    tampilMenuCookies();
+
+                    System.out.print("Nama Pelanggan: ");
                     String nama = sc.nextLine();
 
                     System.out.print("No Antrian: ");
-                    int antrian = sc.nextInt(); sc.nextLine();
+                    int antrian = sc.nextInt();
 
-                    System.out.print("Varian: ");
-                    String varian = sc.nextLine();
+                    int grandTotal = 0;
 
-                    System.out.print("Rasa: ");
-                    String rasa = sc.nextLine();
+                    while (true) {
 
-                    System.out.print("Jumlah: ");
-                    int jumlah = sc.nextInt();
+                        System.out.print("Nomor Menu: ");
+                        int nomorMenu = sc.nextInt();
 
-                    System.out.print("Harga Satuan: ");
-                    int harga = sc.nextInt(); sc.nextLine();
+                        System.out.print("Jumlah: ");
+                        int jumlah = sc.nextInt();
 
-                    System.out.print("Packaging: ");
-                    String pack = sc.nextLine();
+                        String namaMenu =
+                            menuNama[nomorMenu - 1];
 
-                    System.out.print("Asal Pesanan: ");
-                    String asal = sc.nextLine();
+                        int harga =
+                            menuHarga[nomorMenu - 1];
 
-                    Cookies c = new Cookies(nama, antrian, varian, rasa, jumlah, harga, pack, asal);
+                        int total =
+                            harga * jumlah;
 
-                    service.tambah(c);
+                        grandTotal += total;
 
-                    System.out.println("✔ Data berhasil disimpan!");
+                        Cookies c = new Cookies(
+                                nama,
+                                antrian,
+                                namaMenu,
+                                harga,
+                                jumlah,
+                                total
+                        );
+
+                        service.tambah(c);
+
+                        System.out.println("✔ Pesanan ditambahkan!");
+
+                        System.out.print("Tambah pesanan lagi? (y/n): ");
+
+                        sc.nextLine();
+
+                        String lagi =
+                            sc.nextLine();
+
+                        if (lagi.equalsIgnoreCase("n")) {
+
+                            break;
+                        }
+                    }
+
+                    System.out.println("====================================");
+                    System.out.println("TOTAL SELURUH PESANAN = Rp" + grandTotal);
+                    System.out.println("====================================");
+
                     break;
-                }
 
-                // =====================
-                // VIEW
-                // =====================
-                case 2: {
+                // =========================
+                // LIHAT DATA
+                // =========================
+                case 3:
+
                     TablePrinter.print();
                     break;
-                }
 
-                // =====================
-                // UPDATE
-                // =====================
-                case 3: {
-                    System.out.print("ID: ");
-                    int id = sc.nextInt();
+                // =========================
+                // HAPUS DATA
+                // =========================
+                case 4:
 
-                    System.out.print("Jumlah baru: ");
-                    int jumlah = sc.nextInt();
+                    System.out.print("Masukkan ID yang ingin dihapus: ");
 
-                    service.updateJumlah(id, jumlah);
-                    break;
-                }
-
-                // =====================
-                // DELETE
-                // =====================
-                case 4: {
-                    System.out.print("ID: ");
                     int id = sc.nextInt();
 
                     service.delete(id);
+
                     break;
-                }
 
-                // =====================
-                // SEARCH
-                // =====================
-                case 5: {
-                    System.out.print("Nama pembeli: ");
-                    String nama = sc.nextLine();
+                // =========================
+                // HAPUS SEMUA DATA
+                // =========================
+                case 5:
 
-                    service.searchByNama(nama);
+                    System.out.print("Yakin ingin hapus semua data? (y/n): ");
+
+                    String konfirmasi =
+                        sc.nextLine();
+
+                    if (konfirmasi.equalsIgnoreCase("y")) {
+
+                        service.deleteAll();
+                    }
+
                     break;
-                }
 
-                // =====================
-                // STRUK
-                // =====================
-                case 6: {
-                    System.out.print("Nama pembeli: ");
-                    String nama = sc.nextLine();
+                // =========================
+                // CETAK STRUK
+                // =========================
+                case 6:
 
-                    service.cetakStruk(nama);
+                    System.out.print("Nama Pelanggan: ");
+
+                    String namaStruk =
+                        sc.nextLine();
+
+                    service.cetakStruk(namaStruk);
+
                     break;
-                }
 
-                // =====================
-                // EXIT
-                // =====================
-                case 7: {
-                    System.out.println("Keluar...");
+                // =========================
+                // KELUAR
+                // =========================
+                case 7:
+
+                    sc.close();
+
+                    System.out.println("Program selesai...");
                     return;
-                }
 
-                default: {
-                    System.out.println("Menu tidak valid!");
-                }
+                // =========================
+                // DEFAULT
+                // =========================
+                default:
+
+                    System.out.println("❌ Menu tidak valid!");
             }
         }
     }

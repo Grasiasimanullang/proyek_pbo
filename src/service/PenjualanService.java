@@ -1,177 +1,238 @@
+// FILE: src/service/PenjualanService.java
+
 package service;
 
+import db.DBConnection;
 import mapper.PenjualanMapper;
 import model.Cookies;
-import db.DBConnection;
 
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
-
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.time.LocalDateTime;
 
 public class PenjualanService {
 
-    private PenjualanMapper mapper = new PenjualanMapper();
+    PenjualanMapper mapper =
+        new PenjualanMapper();
 
-    // =====================
-    // CREATE
-    // =====================
+    // =========================
+    // TAMBAH DATA
+    // =========================
     public void tambah(Cookies c) {
+
         mapper.insert(c);
     }
 
-    // =====================
-    // UPDATE
-    // =====================
-    public void updateJumlah(int id, int jumlahBaru) {
-        try {
-            Connection conn = DBConnection.connect();
-
-            String sql = "UPDATE penjualan SET jumlah = ? WHERE id = ?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-
-            ps.setInt(1, jumlahBaru);
-            ps.setInt(2, id);
-
-            ps.executeUpdate();
-
-            System.out.println("✔ Data berhasil diupdate");
-
-        } catch (Exception e) {
-            System.out.println("❌ Error update: " + e.getMessage());
-        }
-    }
-
-    // =====================
-    // DELETE
-    // =====================
+    // =========================
+    // DELETE PER ID
+    // =========================
     public void delete(int id) {
-        try {
-            Connection conn = DBConnection.connect();
 
-            String sql = "DELETE FROM penjualan WHERE id = ?";
-            PreparedStatement ps = conn.prepareStatement(sql);
+        try {
+
+            Connection conn =
+                DBConnection.connect();
+
+            String sql =
+                "DELETE FROM penjualan WHERE id = ?";
+
+            PreparedStatement ps =
+                conn.prepareStatement(sql);
 
             ps.setInt(1, id);
 
-            ps.executeUpdate();
+            int result =
+                ps.executeUpdate();
 
-            System.out.println("✔ Data berhasil dihapus");
+            if (result > 0) {
+
+                System.out.println("✔ Data berhasil dihapus");
+
+            } else {
+
+                System.out.println("❌ ID tidak ditemukan");
+            }
 
         } catch (Exception e) {
+
             System.out.println("❌ Error delete: " + e.getMessage());
         }
     }
 
-    // =====================
-    // SEARCH
-    // =====================
-    public void searchByNama(String nama) {
+    // =========================
+    // DELETE ALL + RESET ID
+    // =========================
+    public void deleteAll() {
+
         try {
-            Connection conn = DBConnection.connect();
 
-            String sql = "SELECT * FROM penjualan WHERE nama_pembeli LIKE '%" + nama + "%'";
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(sql);
+            Connection conn =
+                DBConnection.connect();
 
-            System.out.println("\n=== HASIL SEARCH ===");
-            System.out.println("----------------------------------------------------------");
-            System.out.printf("%-3s %-15s %-10s %-5s %-10s%n",
-                    "ID", "Nama", "Varian", "Jml", "Asal");
-            System.out.println("----------------------------------------------------------");
+            String sql1 =
+                "DELETE FROM penjualan";
 
-            while (rs.next()) {
-                System.out.printf("%-3d %-15s %-10s %-5d %-10s%n",
-                        rs.getInt("id"),
-                        rs.getString("nama_pembeli"),
-                        rs.getString("varian"),
-                        rs.getInt("jumlah"),
-                        rs.getString("asal_pesanan")
-                );
-            }
+            PreparedStatement ps1 =
+                conn.prepareStatement(sql1);
+
+            ps1.executeUpdate();
+
+            String sql2 =
+                "DELETE FROM sqlite_sequence WHERE name='penjualan'";
+
+            PreparedStatement ps2 =
+                conn.prepareStatement(sql2);
+
+            ps2.executeUpdate();
+
+            System.out.println("✔ Semua data berhasil dihapus");
+            System.out.println("✔ ID berhasil direset ke 1");
 
         } catch (Exception e) {
-            System.out.println("❌ Error search: " + e.getMessage());
+
+            System.out.println("❌ Error delete all: " + e.getMessage());
         }
     }
 
-    // =====================
-    // 🧾 CETAK STRUK (FITUR UTAMA)
-    // =====================
-    public void cetakStruk(String nama) {
-    try {
-        Connection conn = DBConnection.connect();
+    // =========================
+    // CETAK STRUK PREMIUM
+    // =========================
+    public void cetakStruk(String namaPelanggan) {
 
-        String sql = "SELECT * FROM penjualan WHERE nama_pembeli = ?";
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, nama);
+        try {
 
-        ResultSet rs = ps.executeQuery();
+            Connection conn =
+                DBConnection.connect();
 
-        int grandTotal = 0;
+            String sql =
+                "SELECT * FROM penjualan WHERE nama_pelanggan = ?";
 
-        StringBuilder struk = new StringBuilder();
+            PreparedStatement ps =
+                conn.prepareStatement(sql);
 
-        struk.append("======================================\n");
-        struk.append("         STRUK PEMBELIAN\n");
-        struk.append("   COOKIES IN YOUR HEART\n");
-        struk.append("======================================\n");
+            ps.setString(1, namaPelanggan);
 
-        boolean adaData = false;
+            ResultSet rs =
+                ps.executeQuery();
 
-        while (rs.next()) {
-            adaData = true;
+            StringBuilder struk =
+                new StringBuilder();
 
-            String namaPembeli = rs.getString("nama_pembeli");
-            String varian = rs.getString("varian");
-            String rasa = rs.getString("rasa");
-            int jumlah = rs.getInt("jumlah");
-            int harga = rs.getInt("harga_satuan");
+            struk.append("\n");
+            struk.append("============================================================\n");
+            struk.append("                 COOKIES IN YOUR HEART\n");
+            struk.append("============================================================\n");
+            struk.append("Nama Pelanggan : ")
+                 .append(namaPelanggan)
+                 .append("\n");
+            struk.append("============================================================\n");
 
-            int subtotal = jumlah * harga;
-            grandTotal += subtotal;
+            struk.append(String.format(
+                "%-3s %-28s %-8s %-8s %-10s\n",
+                "No",
+                "Menu",
+                "Qty",
+                "Harga",
+                "Total"
+            ));
 
-            struk.append("Nama     : ").append(namaPembeli).append("\n");
-            struk.append("Varian   : ").append(varian).append("\n");
-            struk.append("Rasa     : ").append(rasa).append("\n");
-            struk.append("Jumlah   : ").append(jumlah).append("\n");
-            struk.append("Harga    : ").append(harga).append("\n");
-            struk.append("Subtotal : ").append(subtotal).append("\n");
-            struk.append("--------------------------------------\n");
+            struk.append("------------------------------------------------------------\n");
+
+            int no = 1;
+            int grandTotal = 0;
+
+            while (rs.next()) {
+
+                String menu =
+                    rs.getString("nama_menu");
+
+                int harga =
+                    rs.getInt("harga");
+
+                int jumlah =
+                    rs.getInt("jumlah");
+
+                int total =
+                    rs.getInt("total");
+
+                grandTotal += total;
+
+                struk.append(String.format(
+                    "%-3d %-28s %-8d %-8d %-10d\n",
+                    no++,
+                    menu,
+                    jumlah,
+                    harga,
+                    total
+                ));
+            }
+
+            struk.append("------------------------------------------------------------\n");
+
+            // =========================
+            // DISKON
+            // =========================
+            int diskon = 0;
+
+            if (grandTotal >= 100000) {
+
+                diskon =
+                    (int) (grandTotal * 0.05);
+            }
+
+            int totalBayar =
+                grandTotal - diskon;
+
+            struk.append(String.format(
+                "%-40s : Rp%d\n",
+                "Subtotal",
+                grandTotal
+            ));
+
+            struk.append(String.format(
+                "%-40s : Rp%d\n",
+                "Diskon 5%",
+                diskon
+            ));
+
+            struk.append(String.format(
+                "%-40s : Rp%d\n",
+                "Grand Total",
+                totalBayar
+            ));
+
+            struk.append("============================================================\n");
+
+            if (diskon > 0) {
+
+                struk.append("   🎉 SELAMAT! ANDA MENDAPATKAN DISKON 5% 🎉\n");
+            }
+
+            struk.append("        TERIMA KASIH TELAH MEMBELI COOKIES\n");
+            struk.append("                 COME AGAIN ❤️\n");
+            struk.append("============================================================\n");
+
+            // tampilkan di terminal
+            System.out.println(struk);
+
+            // simpan file
+            String fileName =
+                "struk_" + namaPelanggan + ".txt";
+
+            FileWriter writer =
+                new FileWriter(fileName);
+
+            writer.write(struk.toString());
+
+            writer.close();
+
+            System.out.println("✔ Struk berhasil disimpan");
+            System.out.println("📄 File : " + fileName);
+
+        } catch (Exception e) {
+
+            System.out.println("❌ Error cetak struk: " + e.getMessage());
         }
-
-        if (!adaData) {
-            System.out.println("❌ Data tidak ditemukan!");
-            return;
-        }
-
-        struk.append("GRAND TOTAL: ").append(grandTotal).append("\n");
-        struk.append("======================================\n");
-
-        // =========================
-        // TAMPILKAN DI TERMINAL
-        // =========================
-        System.out.println(struk);
-
-        // =========================
-        // EXPORT KE FILE TXT
-        // =========================
-        String fileName = "struk_" + nama + "_" + System.currentTimeMillis() + ".txt";
-
-        FileWriter fw = new FileWriter(fileName);
-        PrintWriter pw = new PrintWriter(fw);
-
-        pw.println(struk.toString());
-        pw.close();
-
-        System.out.println("✔ Struk berhasil disimpan ke file: " + fileName);
-
-    } catch (Exception e) {
-        System.out.println("❌ Error cetak struk: " + e.getMessage());
-    }
     }
 }

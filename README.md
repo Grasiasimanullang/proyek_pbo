@@ -1,155 +1,250 @@
-M01 COOKIES IN YOUR HEART - PBO PROJECT
+# COOKIES IN YOUR HEART SYSTEM
 
-Pada tugas ini anda diminta untuk mengembangkan sebuah sistem penjualan cookies berbasis CLI (Command Line Interface) menggunakan Java.
+Project ini merupakan program berbasis CLI (Command Line Interface) menggunakan bahasa Java untuk mengelola data penjualan pada usaha cookies bernama **COOKIES IN YOUR HEART**.
 
-Sistem ini mensimulasikan aplikasi kasir sederhana yang memungkinkan pegawai untuk mencatat transaksi penjualan cookies secara terstruktur.
+Program ini dibuat untuk memenuhi tugas mata kuliah **Pemrograman Berorientasi Objek (PBO)** dengan menerapkan konsep:
 
-Setiap transaksi memiliki informasi:
+* OOP (Object Oriented Programming)
+* Inheritance
+* JDBC
+* SQLite Database
+* ORM sederhana menggunakan Data Mapper
+* CLI System
+* Table Output
 
-nama pembeli
-nomor antrian
-varian cookies
-rasa
-jumlah pembelian
-harga satuan
-packaging
-asal pesanan (GrabFood / GoFood / ShopeeFood / Datang ke toko)
+---
 
-Sistem ini menggunakan:
+# Fitur Program
 
-JDBC (SQLite Database)
-Inheritance
-Data Mapper Pattern (ORM sederhana)
-Modular Architecture (Service, Model, Mapper, DB Layer)
-📦 Package Structure
+Program memiliki beberapa fitur utama:
 
-Semua kelas model berada pada package:
+1. Menampilkan daftar menu cookies
+2. Input pesanan pelanggan
+3. Mendukung multi-order dalam satu transaksi
+4. Harga otomatis sesuai menu
+5. Menampilkan data penjualan dalam bentuk tabel
+6. Hapus data berdasarkan ID
+7. Hapus semua data sekaligus
+8. Reset ID otomatis
+9. Cetak struk pembelian
+10. Export struk ke file `.txt`
+11. Promo diskon otomatis 5%
+12. Penyimpanan data menggunakan SQLite
 
-src.model
+---
 
-Semua logic utama berada pada:
+# Daftar Menu Cookies
 
-src.service
-src.mapper
-src.db
-src.util
-src.app
+| No | Menu                      | Harga    |
+| -- | ------------------------- | -------- |
+| 1  | Chocolate Chip Cookies    | Rp15.000 |
+| 2  | Oatmeal Raisin Cookies    | Rp18.000 |
+| 3  | Double Chocolate Cookies  | Rp20.000 |
+| 4  | Peanut Butter Cookies     | Rp19.000 |
+| 5  | Red Velvet Cookies        | Rp22.000 |
+| 6  | Matcha Cookies            | Rp23.000 |
+| 7  | Choco Lava Cookies        | Rp25.000 |
+| 8  | Almond Crispy Cookies     | Rp21.000 |
+| 9  | Vanilla Butter Cookies    | Rp17.000 |
+| 10 | Cookies and Cream Cookies | Rp24.000 |
+
+---
+
+# Struktur Project
+
+```text
+proyek_pbo/
+│
+├── src/
+│   ├── app/
+│   │   └── Main.java
+│   │
+│   ├── model/
+│   │   ├── Cookies.java
+│   │   └── Pembeli.java
+│   │
+│   ├── mapper/
+│   │   └── PenjualanMapper.java
+│   │
+│   ├── service/
+│   │   └── PenjualanService.java
+│   │
+│   ├── db/
+│   │   ├── DBConnection.java
+│   │   └── InitDB.java
+│   │
+│   └── util/
+│       └── TablePrinter.java
+│
+├── database/
+│   └── cookies.db
+│
+├── lib/
+│   ├── sqlite-jdbc-3.45.3.0.jar
+│   ├── slf4j-api-2.0.13.jar
+│   └── slf4j-simple-2.0.13.jar
+│
+├── out/
+│
+├── README.md
+└── Makefile
+```
+
+---
+
+# Penjelasan Folder
+
+| Folder    | Fungsi                      |
+| --------- | --------------------------- |
+| src       | Source code utama           |
+| database  | Penyimpanan database SQLite |
+| lib       | Library JDBC SQLite         |
+| out       | Hasil compile `.class`      |
+| README.md | Dokumentasi project         |
+
+---
+
+# Database
+
+Program menggunakan:
+
+* SQLite
+* JDBC Driver
+* Database file:
+
+```text
+database/cookies.db
+```
+
+---
+
+# Konsep OOP yang Digunakan
+
+## 1. Class dan Object
+
+Contoh:
+
+* Cookies
+* Pembeli
+
+---
+
+## 2. Inheritance
+
+Class model menggunakan konsep pewarisan untuk pengelolaan object.
+
+---
+
+## 3. Encapsulation
+
+Data pada object disimpan menggunakan:
+
+* private attribute
+* getter
+* setter
+
+---
+
+## 4. Data Mapper (ORM Sederhana)
+
+Class:
+
+```text
+PenjualanMapper.java
+```
+
+digunakan sebagai penghubung antara:
+
+* Java Object
+* SQLite Database
+
+---
+
+# Fitur Diskon
+
+Program memiliki promo otomatis:
+
+| Kondisi                    | Diskon |
+| -------------------------- | ------ |
+| Total belanja >= Rp100.000 | 5%     |
+
+Diskon otomatis tercetak pada struk.
+
+---
+
+# Contoh Output Struk
+
+```text
+============================================================
+                 COOKIES IN YOUR HEART
+============================================================
+Nama Pelanggan : kaka
+============================================================
+No  Menu                         Qty      Harga    Total
+------------------------------------------------------------
+1   Chocolate Chip Cookies      2        15000    30000
+2   Oatmeal Raisin Cookies      3        18000    54000
+3   Double Chocolate Cookies    4        20000    80000
+------------------------------------------------------------
+Subtotal                                : Rp164000
+Diskon 5%                               : Rp8200
+Grand Total                             : Rp155800
+============================================================
+        TERIMA KASIH TELAH MEMBELI
+                 COME AGAIN ❤️
+============================================================
+```
+
+---
 
 
-TASK 01: INPUT & BASIC CRUD SYSTEM 
+# Cara Kerja Program
 
-Driver:
+## Input Pesanan
 
-app.DriverTugas1
+User menginput:
 
-Format Input:
-Input data penjualan secara manual:
-- nama pembeli
-- nomor antrian
-- varian
-- rasa
-- jumlah
-- harga satuan
-- packaging
-- asal pesanan
+* Nama pelanggan
+* Nomor antrian
+* Nomor menu
+* Jumlah pesanan
 
-Data disimpan ke SQLite database.
+Harga otomatis menyesuaikan menu.
 
-Output:
-✔ Data berhasil disimpan!
-Contoh Input:
-Nama Pembeli: Sari
-No Antrian: 12
-Varian: Crumble
-Rasa: Coklat
-Jumlah: 2
-Harga Satuan: 20000
-Packaging: Kotak
-Asal Pesanan: GrabFood
+---
 
+## Multi Order
 
-TASK 02: VIEW DATA PENJUALAN
+Program mendukung:
 
-Driver:
+* lebih dari satu pesanan
+* jumlah berbeda tiap menu
 
-app.DriverTugas2
-Fitur:
-Menampilkan seluruh data penjualan
-Output dalam bentuk tabel CLI
-Output Format:
-ID | Nama | Varian | Rasa | Jumlah | Harga | Total
+dalam satu transaksi pelanggan.
 
+---
 
-TASK 03: UPDATE & DELETE DATA 
+# Library yang Digunakan
 
-Driver:
+| Library      | Fungsi                 |
+| ------------ | ---------------------- |
+| sqlite-jdbc  | JDBC SQLite Driver     |
+| slf4j-api    | Logging dependency     |
+| slf4j-simple | Logging implementation |
 
-app.DriverTugas3
-Fitur:
-Update jumlah pembelian berdasarkan ID
-Delete data berdasarkan ID
-Validasi data sebelum eksekusi
-Contoh Input:
-Update Jumlah:
-ID: 1
-Jumlah Baru: 5
+---
 
-Delete:
-ID: 2
+# Author
 
+Project dibuat untuk memenuhi tugas mata kuliah:
+```text Pemrograman Berorientasi Objek (PBO) ```
 
-TASK 04: SEARCH & STRUK + EXPORT FILE 
+dengan studi kasus:
 
-Driver:
+```text COOKIES IN YOUR HEART SYSTEM ```
 
-app.DriverTugas4
-Fitur:
-Cari data berdasarkan nama pembeli
-Cetak struk pembelian
-Export struk ke file .txt
-Menampilkan total harga transaksi
-Format Struk:
-======================================
-         STRUK PEMBELIAN
-   COOKIES IN YOUR HEART
-======================================
-Nama     : Sari
-Varian   : Crumble
-Rasa     : Coklat
-Jumlah   : 2
-Harga    : 20000
-Subtotal : 40000
---------------------------------------
-GRAND TOTAL: 40000
-======================================
-🧱 DATABASE STRUCTURE (SQLite)
-
-Tabel: penjualan
-
-Field	Type
-id	INTEGER (PK)
-nama_pembeli	TEXT
-nomor_antrian	INTEGER
-varian	TEXT
-rasa	TEXT
-jumlah	INTEGER
-harga_satuan	INTEGER
-packaging	TEXT
-asal_pesanan	TEXT
-⚙️ HOW TO RUN PROJECT
-Compile:
-javac -cp ".;lib/*" -d out src/app/*.java src/model/*.java src/service/*.java src/mapper/*.java src/db/*.java src/util/*.java
-Run:
-java -cp ".;out;lib/*" app.Main
-🧠 SOFTWARE DESIGN
-✔ Object Oriented Programming
-Encapsulation
-Inheritance
-Polymorphism
-✔ Architecture
-Service Layer Pattern
-Data Mapper Pattern (ORM sederhana)
-MVC-like separation
-✔ Database
-SQLite via JDBC
-Auto table initialization
+Anggota Kelompok:
+1. Boy Harendy Simamora
+2. Grasia Manullang
+3. josep Marpaung
+4. Suchia Nikah Panjaitan
